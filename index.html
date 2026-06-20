@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Photo Caption Slideshow</title>
+
+  <style>
+    :root {
+      --blue: #1d4ed8;
+      --pink: #ec4899;
+      --dark: #111827;
+      --light: #f9fafb;
+      --card: #ffffff;
+      --border: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #eff6ff, #fdf2f8);
+      color: var(--dark);
+    }
+
+    header {
+      padding: 18px;
+      text-align: center;
+      background: linear-gradient(135deg, var(--blue), var(--pink));
+      color: white;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.18);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      font-size: 15px;
+      opacity: 0.95;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+
+    .controls {
+      display: grid;
+      gap: 12px;
+    }
+
+    input[type="file"],
+    input[type="text"],
+    textarea,
+    button {
+      width: 100%;
+      font-size: 16px;
+      border-radius: 12px;
+    }
+
+    input[type="file"],
+    input[type="text"],
+    textarea {
+      border: 1px solid var(--border);
+      padding: 12px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      padding: 13px 15px;
+      background: var(--blue);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.92;
+    }
+
+    .secondary {
+      background: var(--pink);
+    }
+
+    .danger {
+      background: #dc2626;
+    }
+
+    .gray {
+      background: #374151;
+    }
+
+    .button-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 14px;
+    }
+
+    .photo-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+
+    .photo-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      display: block;
+    }
+
+    .photo-card-body {
+      padding: 10px;
+    }
+
+    .caption-text {
+      font-size: 14px;
+      margin-bottom: 10px;
+      min-height: 36px;
+      word-wrap: break-word;
+    }
+
+    .small-buttons {
+      display: grid;
+      gap: 8px;
+    }
+
+    .small-buttons button {
+      padding: 9px;
+      font-size: 14px;
+    }
+
+    .empty {
+      text-align: center;
+      color: #6b7280;
+      padding: 22px;
+    }
+
+    #slideshowOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: black;
+      z-index: 9999;
+      color: white;
+    }
+
+    #slideImage {
+      width: 100vw;
+      height: 100vh;
+      object-fit: contain;
+      background: black;
+      display: block;
+    }
+
+    #slideCaption {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 24px 18px;
+      text-align: center;
+      font-size: clamp(24px, 4vw, 54px);
+      font-weight: bold;
+      background: linear-gradient(transparent, rgba(0,0,0,0.78));
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
+    }
+
+    #closeSlideshow {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      width: auto;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: rgba(220,38,38,0.9);
+      z-index: 10000;
+    }
+
+    .tip {
+      font-size: 14px;
+      color: #4b5563;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 24px;
+      }
+
+      .button-row {
+        grid-template-columns: 1fr;
+      }
+
+      .photo-grid {
+        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Photo Caption Slideshow</h1>
+    <p>Add pictures, write captions, and play them on a 5 second loop.</p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="controls">
+        <input id="photoInput" type="file" accept="image/*" multiple />
+
+        <textarea id="captionInput" placeholder="Type a caption for the selected picture(s)..."></textarea>
+
+        <button onclick="addPhotos()">Add Picture(s)</button>
+
+        <div class="button-row">
+          <button class="secondary" onclick="startSlideshow()">Start 5 Second Slideshow</button>
+          <button class="gray" onclick="toggleFullscreen()">Fullscreen</button>
+        </div>
+
+        <button class="danger" onclick="clearAllPhotos()">Clear All Pictures</button>
+
+        <p class="tip">
+          For TV: open this app on your iPhone or iPad, tap Start Slideshow, then use AirPlay or Screen Mirroring.
+          The photos are saved on the device/browser where you add them.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>My Pictures</h2>
+      <div id="photoGrid" class="photo-grid"></div>
+      <div id="emptyMessage" class="empty">No pictures added yet.</div>
+    </section>
+  </main>
+
+  <div id="slideshowOverlay">
+    <button id="closeSlideshow" onclick="stopSlideshow()">Close</button>
+    <img id="slideImage" src="" alt="Slideshow image" />
+    <div id="slideCaption"></div>
+  </div>
+
+  <script>
+    let photos = [];
+    let currentSlide = 0;
+    let slideshowTimer = null;
+
+    const STORAGE_KEY = "photoCaptionSlideshowApp";
+
+    function savePhotos() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
+    }
+
+    function loadPhotos() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        photos = JSON.parse(saved);
+      }
+      renderPhotos();
+    }
+
+    function addPhotos() {
+      const input = document.getElementById("photoInput");
+      const caption = document.getElementById("captionInput").value.trim();
+
+      if (!input.files || input.files.length === 0) {
+        alert("Please choose at least one picture first.");
+        return;
+      }
+
+      const files = Array.from(input.files);
+      let loadedCount = 0;
+
+      files.forEach(file => {
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+          photos.push({
+            id: Date.now() + Math.random(),
+            image: event.target.result,
+            caption: caption || ""
+          });
+
+          loadedCount++;
+
+          if (loadedCount === files.length) {
+            savePhotos();
+            renderPhotos();
+            input.value = "";
+            document.getElementById("captionInput").value = "";
+          }
+        };
+
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function renderPhotos() {
+      const grid = document.getElementById("photoGrid");
+      const empty = document.getElementById("emptyMessage");
+
+      grid.innerHTML = "";
+
+      if (photos.length === 0) {
+        empty.style.display = "block";
+        return;
+      }
+
+      empty.style.display = "none";
+
+      photos.forEach((photo, index) => {
+        const card = document.createElement("div");
+        card.className = "photo-card";
+
+        card.innerHTML = `
+          <img src="${photo.image}" alt="Saved photo">
+          <div class="photo-card-body">
+            <div class="caption-text">${escapeHtml(photo.caption || "No caption")}</div>
+            <div class="small-buttons">
+              <button onclick="editCaption(${index})">Edit Caption</button>
+              <button class="danger" onclick="deletePhoto(${index})">Delete</button>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function editCaption(index) {
+      const newCaption = prompt("Edit caption:", photos[index].caption || "");
+      if (newCaption !== null) {
+        photos[index].caption = newCaption.trim();
+        savePhotos();
+        renderPhotos();
+      }
+    }
+
+    function deletePhoto(index) {
+      if (confirm("Delete this picture?")) {
+        photos.splice(index, 1);
+        savePhotos();
+        renderPhotos();
+      }
+    }
+
+    function clearAllPhotos() {
+      if (photos.length === 0) {
+        alert("There are no pictures to clear.");
+        return;
+      }
+
+      if (confirm("Are you sure you want to delete all pictures from this app?")) {
+        photos = [];
+        savePhotos();
+        renderPhotos();
+        stopSlideshow();
+      }
+    }
+
+    function startSlideshow() {
+      if (photos.length === 0) {
+        alert("Please add pictures first.");
+        return;
+      }
+
+      currentSlide = 0;
+      document.getElementById("slideshowOverlay").style.display = "block";
+      showSlide();
+
+      clearInterval(slideshowTimer);
+      slideshowTimer = setInterval(() => {
+        currentSlide = (currentSlide + 1) % photos.length;
+        showSlide();
+      }, 5000);
+    }
+
+    function showSlide() {
+      const photo = photos[currentSlide];
+      document.getElementById("slideImage").src = photo.image;
+      document.getElementById("slideCaption").textContent = photo.caption || "";
+    }
+
+    function stopSlideshow() {
+      document.getElementById("slideshowOverlay").style.display = "none";
+      clearInterval(slideshowTimer);
+      slideshowTimer = null;
+    }
+
+    function toggleFullscreen() {
+      const element = document.documentElement;
+
+      if (!document.fullscreenElement) {
+        if (element.requestFullscreen) {
+          element.requestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+
+    function escapeHtml(text) {
+      return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    document.addEventListener("keydown", function(event) {
+      if (event.key === "Escape") {
+        stopSlideshow();
+      }
+    });
+
+    loadPhotos();
+  </script>
+</body>
+</html>
