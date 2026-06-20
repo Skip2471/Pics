@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <title>Photo Caption Slideshow</title>
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" href="apple-touch-icon.png">
 
   <style>
     :root {
@@ -445,7 +447,7 @@
       slideshowTimer = setInterval(() => {
         currentSlide = (currentSlide + 1) % photos.length;
         showSlide();
-      }, 5000);
+      }, 10000);
     }
 
     function showSlide() {
