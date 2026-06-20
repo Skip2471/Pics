@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>Photo Caption Slideshow</title>
 
   <style>
@@ -27,7 +28,7 @@
     }
 
     header {
-      padding: 18px;
+      padding: 28px 18px;
       text-align: center;
       background: linear-gradient(135deg, var(--blue), var(--pink));
       color: white;
@@ -36,12 +37,12 @@
 
     header h1 {
       margin: 0;
-      font-size: 28px;
+      font-size: 32px;
     }
 
     header p {
-      margin: 6px 0 0;
-      font-size: 15px;
+      margin: 10px 0 0;
+      font-size: 18px;
       opacity: 0.95;
     }
 
@@ -60,40 +61,35 @@
       box-shadow: 0 4px 16px rgba(0,0,0,0.08);
     }
 
-    .controls {
-      display: grid;
-      gap: 12px;
-    }
-
     input[type="file"],
-    input[type="text"],
     textarea,
     button {
       width: 100%;
-      font-size: 16px;
+      font-size: 18px;
       border-radius: 12px;
     }
 
     input[type="file"],
-    input[type="text"],
     textarea {
       border: 1px solid var(--border);
       padding: 12px;
       background: white;
+      margin-bottom: 12px;
     }
 
     textarea {
-      min-height: 70px;
+      min-height: 80px;
       resize: vertical;
     }
 
     button {
       border: none;
-      padding: 13px 15px;
+      padding: 14px 15px;
       background: var(--blue);
       color: white;
       font-weight: bold;
       cursor: pointer;
+      margin-bottom: 12px;
     }
 
     button:hover {
@@ -120,7 +116,7 @@
 
     .photo-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
       gap: 14px;
     }
 
@@ -134,7 +130,7 @@
 
     .photo-card img {
       width: 100%;
-      height: 140px;
+      height: 150px;
       object-fit: cover;
       display: block;
     }
@@ -144,26 +140,34 @@
     }
 
     .caption-text {
-      font-size: 14px;
+      font-size: 15px;
       margin-bottom: 10px;
-      min-height: 36px;
+      min-height: 38px;
       word-wrap: break-word;
     }
 
-    .small-buttons {
-      display: grid;
-      gap: 8px;
-    }
-
     .small-buttons button {
-      padding: 9px;
-      font-size: 14px;
+      padding: 10px;
+      font-size: 15px;
+      margin-bottom: 8px;
     }
 
     .empty {
       text-align: center;
       color: #6b7280;
       padding: 22px;
+    }
+
+    .tip {
+      font-size: 15px;
+      color: #4b5563;
+      line-height: 1.4;
+    }
+
+    .count {
+      font-weight: bold;
+      margin-bottom: 12px;
+      color: #374151;
     }
 
     #slideshowOverlay {
@@ -188,11 +192,11 @@
       left: 0;
       right: 0;
       bottom: 0;
-      padding: 24px 18px;
+      padding: 28px 18px;
       text-align: center;
-      font-size: clamp(24px, 4vw, 54px);
+      font-size: clamp(26px, 4vw, 56px);
       font-weight: bold;
-      background: linear-gradient(transparent, rgba(0,0,0,0.78));
+      background: linear-gradient(transparent, rgba(0,0,0,0.82));
       text-shadow: 2px 2px 8px rgba(0,0,0,0.9);
     }
 
@@ -207,15 +211,13 @@
       z-index: 10000;
     }
 
-    .tip {
-      font-size: 14px;
-      color: #4b5563;
-      line-height: 1.4;
-    }
-
     @media (max-width: 600px) {
       header h1 {
-        font-size: 24px;
+        font-size: 28px;
+      }
+
+      header p {
+        font-size: 16px;
       }
 
       .button-row {
@@ -223,7 +225,7 @@
       }
 
       .photo-grid {
-        grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
       }
     }
   </style>
@@ -237,29 +239,28 @@
 
   <main>
     <section class="panel">
-      <div class="controls">
-        <input id="photoInput" type="file" accept="image/*" multiple />
+      <input id="photoInput" type="file" accept="image/*" multiple />
 
-        <textarea id="captionInput" placeholder="Type a caption for the selected picture(s)..."></textarea>
+      <textarea id="captionInput" placeholder="Type a caption for the selected picture(s)..."></textarea>
 
-        <button onclick="addPhotos()">Add Picture(s)</button>
+      <button onclick="addPhotos()">Add Picture(s)</button>
 
-        <div class="button-row">
-          <button class="secondary" onclick="startSlideshow()">Start 5 Second Slideshow</button>
-          <button class="gray" onclick="toggleFullscreen()">Fullscreen</button>
-        </div>
-
-        <button class="danger" onclick="clearAllPhotos()">Clear All Pictures</button>
-
-        <p class="tip">
-          For TV: open this app on your iPhone or iPad, tap Start Slideshow, then use AirPlay or Screen Mirroring.
-          The photos are saved on the device/browser where you add them.
-        </p>
+      <div class="button-row">
+        <button class="secondary" onclick="startSlideshow()">Start 5 Second Slideshow</button>
+        <button class="gray" onclick="toggleFullscreen()">Fullscreen</button>
       </div>
+
+      <button class="danger" onclick="clearAllPhotos()">Clear All Pictures</button>
+
+      <p class="tip">
+        For TV: open this app on your iPhone or iPad, tap Start Slideshow, then use AirPlay or Screen Mirroring.
+        This updated version shrinks photos before saving so more pictures can fit.
+      </p>
     </section>
 
     <section class="panel">
       <h2>My Pictures</h2>
+      <div id="photoCount" class="count">Saved pictures: 0</div>
       <div id="photoGrid" class="photo-grid"></div>
       <div id="emptyMessage" class="empty">No pictures added yet.</div>
     </section>
@@ -276,10 +277,16 @@
     let currentSlide = 0;
     let slideshowTimer = null;
 
-    const STORAGE_KEY = "photoCaptionSlideshowApp";
+    const STORAGE_KEY = "photoCaptionSlideshowAppCompressed";
 
     function savePhotos() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(photos));
+        return true;
+      } catch (error) {
+        alert("Storage is full. Try deleting some pictures or adding fewer at one time.");
+        return false;
+      }
     }
 
     function loadPhotos() {
@@ -300,37 +307,70 @@
       }
 
       const files = Array.from(input.files);
-      let loadedCount = 0;
+      let added = 0;
 
       files.forEach(file => {
-        const reader = new FileReader();
-
-        reader.onload = function(event) {
+        compressImage(file, 1200, 0.72, function(compressedImage) {
           photos.push({
             id: Date.now() + Math.random(),
-            image: event.target.result,
+            image: compressedImage,
             caption: caption || ""
           });
 
-          loadedCount++;
+          added++;
 
-          if (loadedCount === files.length) {
-            savePhotos();
-            renderPhotos();
-            input.value = "";
-            document.getElementById("captionInput").value = "";
+          if (added === files.length) {
+            if (savePhotos()) {
+              renderPhotos();
+              input.value = "";
+              document.getElementById("captionInput").value = "";
+              alert("Picture(s) added successfully.");
+            }
           }
+        });
+      });
+    }
+
+    function compressImage(file, maxWidth, quality, callback) {
+      const reader = new FileReader();
+
+      reader.onload = function(event) {
+        const img = new Image();
+
+        img.onload = function() {
+          const canvas = document.createElement("canvas");
+
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+
+          const compressed = canvas.toDataURL("image/jpeg", quality);
+          callback(compressed);
         };
 
-        reader.readAsDataURL(file);
-      });
+        img.src = event.target.result;
+      };
+
+      reader.readAsDataURL(file);
     }
 
     function renderPhotos() {
       const grid = document.getElementById("photoGrid");
       const empty = document.getElementById("emptyMessage");
+      const count = document.getElementById("photoCount");
 
       grid.innerHTML = "";
+      count.textContent = "Saved pictures: " + photos.length;
 
       if (photos.length === 0) {
         empty.style.display = "block";
@@ -360,6 +400,7 @@
 
     function editCaption(index) {
       const newCaption = prompt("Edit caption:", photos[index].caption || "");
+
       if (newCaption !== null) {
         photos[index].caption = newCaption.trim();
         savePhotos();
@@ -383,7 +424,7 @@
 
       if (confirm("Are you sure you want to delete all pictures from this app?")) {
         photos = [];
-        savePhotos();
+        localStorage.removeItem(STORAGE_KEY);
         renderPhotos();
         stopSlideshow();
       }
@@ -400,6 +441,7 @@
       showSlide();
 
       clearInterval(slideshowTimer);
+
       slideshowTimer = setInterval(() => {
         currentSlide = (currentSlide + 1) % photos.length;
         showSlide();
@@ -436,7 +478,7 @@
       return text
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
+        .replace(/>/g, "&lt;")
         .replace(/"/g, "&quot;")
         .replace(/'/g, "&#039;");
     }
